@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Список покупок для пикника</title>
+<style>
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        background-color: #f4f4f9;
+        color: #333;
+        margin: 0;
+        padding: 15px;
+        -webkit-tap-highlight-color: transparent; /* отключаем выделение при тапе на мобильных */
+    }
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #fff;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+    .header {
+        background-color: #4CAF50;
+        color: white;
+        padding: 20px;
+        text-align: center;
+        font-size: 1.5em;
+    }
+    .header h1 {
+        margin: 0;
+        font-size: 1.2em;
+    }
+    .category {
+        border-bottom: 1px solid #eee;
+    }
+    .category-title {
+        background-color: #f9f9f9;
+        padding: 15px 20px;
+        font-size: 1.2em;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .category-title .arrow {
+        transition: transform 0.3s;
+    }
+    .category-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.5s ease-out;
+    }
+    ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+    li {
+        display: flex;
+        align-items: center;
+        padding: 15px 20px;
+        border-top: 1px solid #f0f0f0;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    li:hover {
+        background-color: #f9f9f9;
+    }
+    li.checked {
+        text-decoration: line-through;
+        color: #aaa;
+        background-color: #fdfdfd;
+    }
+    li.checked .emoji {
+        opacity: 0.5;
+    }
+    .emoji {
+        font-size: 1.5em;
+        margin-right: 15px;
+        transition: opacity 0.3s;
+    }
+    .item-details {
+        flex-grow: 1;
+    }
+    .item-name {
+        font-size: 1em;
+    }
+    .item-note {
+        font-size: 0.8em;
+        color: #777;
+    }
+    li.checked .item-note {
+        color: #ccc;
+    }
+    .quantity {
+        font-size: 1em;
+        font-weight: bold;
+        padding: 5px 10px;
+        border-radius: 8px;
+        background-color: #e8e8e8;
+        min-width: 60px;
+        text-align: center;
+        transition: background-color 0.3s;
+    }
+    li.checked .quantity {
+        background-color: #f5f5f5;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>📝 Список на Пикник</h1>
+    </div>
+
+    <div class="category">
+        <div class="category-title" onclick="toggleCategory(this)">
+            <span>🥩 Основное для гриля</span>
+            <span class="arrow">▼</span>
+        </div>
+        <div class="category-content">
+            <ul>
+                <li onclick="toggleItem(this)">
+                    <span class="emoji">🍖</span>
+                    <div class="item-details">
+                        <div class="item-name">Свиной ошеек</div>
+                        <div class="item-note">Без кости, охлажденный</div>
+                    </div>
+                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">3 кг</div>
+                </li>
+                <li onclick="toggleItem(this)">
+                    <span class="emoji">🐟</span>
+                    <div class="item-details">
+                        <div class="item-name">Скумбрия</div>
+                        <div class="item-note">Для вегетарианца</div>
+                    </div>
+                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">2 шт.</div>
+                </li>
+                <li onclick="toggleItem(this)">
+                    <span class="emoji">🧅</span>
+                    <div class="item-details">
+                        <div class="item-name">Лук репчатый</div>
+                        <div class="item-note">Для маринада и салата</div>
+                    </div>
+                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">1 кг</div>
+                </li>
+                 <li onclick="toggleItem(this)">
+                    <span class="emoji">🍋</span>
+                    <div class="item-details">
+                        <div class="item-name">Лимон</div>
+                        <div class="item-note">Для рыбы и напитков</div>
+                    </div>
+                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">2 шт.</div>
+                </li>
+                <li onclick="toggleItem(this)">
+                    <span class="emoji">🌶️</span>
+                    <div class="item-details">
+                        <div class="item-name">Приправа для шашлыка</div>
+                        <div class="item-note">Проверенная, вкусная</div>
+                    </div>
+                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">1 пачка</div>
+                </li>
+                 <li onclick="toggleItem(this)">
+                    <span class="emoji">🌿</span>
+                    <div class="item-details">
+                        <div class="item-name">Приправа для рыбы</div>
+                        <div class="item-note">С травами и солью. [2]</div>
+                    </div>
+                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">1 пачка</div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="category">
+        <div class="category-title" onclick="toggleCategory(this)">
+            <span>🥬 Овощи и закуски</span>
+            <span class="arrow">▼</span>
+        </div>
+        <div class="category-content">
+            <ul>
+                <li onclick="toggleItem(this)">
+                    <span class="emoji">🍅</span>
+                    <div class="item-details"><div class="item-name">Помидоры</div></div>
+                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">1.5 кг</div>
+                </li>
+                <li onclick="toggleItem(this)">
+                    <span class="emoji">🥒</span>
+                    <div class="item-details"><div class="item-name">Огурцы</div></div>
+                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">1 кг</div>
+                </li>
+                <li onclick="toggleItem(this)">
+                    <span class="emoji">🫑</span>
+                    <div class="item-details"><div class="item-name">Болгарский перец</div></div>
+                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">0.5 кг</div>
+                </li>
+                 <li onclick="toggleItem(this)">
+                    <span class="emoji">🍄</span>
+                    <div class="item-details">
+                        <div class="item-name">Шампиньоны</div>
+                        <div class="item-note">Для гриля</div>
+                    </div>
+                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">1 кг</div>
+                </li>
+                <li onclick="toggleItem(this)">
+                    <span class="emoji">🫓</span>
+                    <div class="item-details">
+                        <div class="item-name">Лаваш тонкий</div>
+                        <div class="item-note">Для рулетов и к шашлыку. [5]</div>
+                    </div>
+                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">3 уп.</div>
+                </li>
+                 <li onclick="toggleItem(this)">
+                    <span class="emoji">🧀</span>
+                    <div class="item-details">
+                        <div class="item-name">Сыр сулугуни</div>
+                        <div class="item-note">Для лаваша на мангале. [15]</div>
+                    </div>
+                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">400 г</div>
+                </li>
+                <li onclick="toggleItem(this)">
+                    <span class="emoji">🌿</span>
+                    <div class="item-details">
+                        <div class="item-name">Зелень</div>
+                        <div class="item-note">Укроп, петрушка, кинза</div>
+                    </div>
+                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">3 пучка</div>
+                </li>
+                 <li onclick="toggleItem(this)">
+                    <span class="emoji">🍞</span>
+                    <div class="item-details"><div class="item-name">Хлеб тостовый</div></div>
+                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">1 уп.</div>
+                </li>
+                 <li onclick="toggleItem(this)">
+                    <span class="emoji">🥫</span>
+                    <div class="item-details">
+                        <div class="item-name">Намазка/Хумус</div>
+                        <div class="item-note">Для тостов</div>
+                    </div>
+                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">1 банка</div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+     <div class="category">
+        <div class="category-title" onclick="toggleCategory(this)">
+            <span>🥤 Напитки</span>
+            <span class="arrow">▼</span>
+        </div>
+        <div class="category-content">
+            <ul>
+                <li onclick="toggleItem(this)">
+                    <span class="emoji">💧</span>
+                    <div class="item-details">
+                        <div class="item-name">Вода питьевая</div>
+                        <div class="item-note">Негазированная</div>
+                    </div>
+                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">2 л</div>
+                </li>
+                 <li onclick="toggleItem(this)">
+                    <span class="emoji">🥤</span>
+                    <div class="item-details"><div class="item-name">Кола / Лимонад</div></div>
+                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">4 л</div>
+                </li>
+                <li onclick="toggleItem(this)">
+                    <span class="emoji">🍺</span>
+                    <div class="item-details"><div class="item-name">Пиво</div></div>
+                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">4 уп/16 банок</div>
+                </li>
+                <li onclick="toggleItem(this)">
+                    <span class="emoji">🥃</span>
+                    <div class="item-details"><div class="item-name">Джек Фаер (или другой виски)</div></div>
+                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">0.7 л</div>
+                </li>
+                 <li onclick="toggleItem(this)">
+                    <span class="emoji">🍸</span>
+                    <div class="item-details"><div class="item-name">Джин Gordon's Pink (или другой)</div></div>
+                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">0.7 л</div>
+                </li>
+                <li onclick="toggleItem(this)">
+                    <span class="emoji">🍹</span>
+                    <div class="item-details"><div class="item-name">Тоник / Швепс</div>
+                     <div class="item-note">Для джина</div></div>
+                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">1 л</div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="category">
+        <div class="category-title" onclick="toggleCategory(this)">
+            <span>🛠️ Прочее</span>
+            <span class="arrow">▼</span>
+        </div>
+        <div class="category-content">
+            <ul>
+                <li onclick="toggleItem(this)">
+                    <span class="emoji">🔥</span>
+                    <div class="item-details"><div class="item-name">Уголь</div></div>
+                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">5 кг</div>
+                </li>
+                <li onclick="toggleItem(this)">
+                    <span class="emoji">💧</span>
+                    <div class="item-details"><div class="item-name">Розжиг</div></div>
+                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">1 бут.</div>
+                </li>
+                <li onclick="toggleItem(this)">
+                    <span class="emoji">🍴</span>
+                    <div class="item-details"><div class="item-name">Одноразовая посуда</div>
+                    <div class="item-note">Тарелки, вилки, стаканы</div></div>
+                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">1 комп.</div>
+                </li>
+                <li onclick="toggleItem(this)">
+                    <span class="emoji">🧻</span>
+                    <div class="item-details"><div class="item-name">Салфетки</div>
+                    <div class="item-note">Сухие и влажные</div></div>
+                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">2 уп.</div>
+                </li>
+                 <li onclick="toggleItem(this)">
+                    <span class="emoji">🗑️</span>
+                    <div class="item-details"><div class="item-name">Мусорные пакеты</div></div>
+                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">1 рулон</div>
+                </li>
+                 <li onclick="toggleItem(this)">
+                    <span class="emoji">🔪</span>
+                    <div class="item-details"><div class="item-name">Нож и доска (пластик)</div></div>
+                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">1 комп.</div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleItem(element) {
+        element.classList.toggle('checked');
+    }
+
+    function toggleCategory(element) {
+        const content = element.nextElementSibling;
+        const arrow = element.querySelector('.arrow');
+        if (content.style.maxHeight) {
+            content.style.maxHeight = null;
+            arrow.style.transform = 'rotate(0deg)';
+        } else {
+            // Закрыть все остальные категории
+            document.querySelectorAll('.category-content').forEach(cat => {
+                cat.style.maxHeight = null;
+                cat.previousElementSibling.querySelector('.arrow').style.transform = 'rotate(0deg)';
+            });
+            // Открыть текущую
+            content.style.maxHeight = content.scrollHeight + "px";
+            arrow.style.transform = 'rotate(180deg)';
+        }
+    }
+    
+    // Открыть первую категорию по умолчанию
+    document.addEventListener('DOMContentLoaded', function() {
+        const firstCategory = document.querySelector('.category-title');
+        if(firstCategory) {
+            toggleCategory(firstCategory);
+        }
+    });
+
+</script>
+
+</body>
+</html>
