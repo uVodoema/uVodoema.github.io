@@ -6,14 +6,18 @@
 <title>Радость встреч у водоема</title>
 <style>
     :root {
-        --primary-color: #34A853; /* Более насыщенный зеленый */
+        --primary-color: #34A853;
+        --primary-dark: #2E8B45;
+        --primary-light: #e6f4ea;
         --light-gray: #f8f9fa;
         --medium-gray: #e9ecef;
-        --dark-gray: #495057;
+        --dark-gray: #6c757d;
         --text-color: #212529;
         --background-color: #ffffff;
         --shadow-color: rgba(0, 0, 0, 0.08);
-        --checked-color: #6c757d;
+        --checked-color: #8a929a;
+        --danger-color: #dc3545;
+        --danger-light: #f8d7da;
     }
 
     body {
@@ -35,18 +39,26 @@
     }
 
     .header {
-        background: linear-gradient(135deg, #34A853, #2E8B45);
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
         color: white;
         padding: 20px 25px;
         text-align: center;
+        position: relative;
     }
 
     .header h1 {
         margin: 0;
-        font-size: 1.5em;
+        font-size: 1.6em;
         font-weight: 600;
+        padding: 5px;
+        border-radius: 8px;
+        transition: background-color 0.3s;
     }
-    
+    .header h1[contenteditable="true"]:focus {
+        background-color: rgba(255, 255, 255, 0.2);
+        outline: none;
+    }
+
     .progress-section {
         padding: 15px 25px;
         background-color: #fafafa;
@@ -75,24 +87,60 @@
         transition: width 0.5s ease-in-out;
     }
 
+    .category {
+        border-bottom: 1px solid var(--medium-gray);
+        transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
     .category-title {
         background-color: var(--background-color);
-        padding: 18px 25px;
+        padding: 15px 20px;
         font-size: 1.2em;
         font-weight: 600;
         cursor: pointer;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        border-bottom: 1px solid var(--light-gray);
         position: sticky;
         top: 0;
-        z-index: 10;
+        z-index: 5;
+    }
+    
+    .category-name {
+        flex-grow: 1;
+    }
+
+    .category-controls, .item-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .icon-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 5px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: background-color 0.2s;
+    }
+    .icon-btn:hover {
+        background-color: var(--medium-gray);
+    }
+    .icon-btn svg {
+        width: 18px;
+        height: 18px;
+        stroke-width: 2;
+        color: var(--dark-gray);
     }
 
     .category-title .arrow {
         transition: transform 0.3s;
         font-size: 1em;
+        margin-left: 10px;
     }
 
     .category-content {
@@ -110,14 +158,9 @@
     li {
         display: flex;
         align-items: center;
-        padding: 15px 25px;
+        padding: 12px 25px 12px 20px;
         border-top: 1px solid var(--light-gray);
-        cursor: pointer;
-        transition: background-color 0.2s, transform 0.2s;
-    }
-    li:hover {
-        background-color: #fcfcfc;
-        transform: scale(1.02);
+        transition: background-color 0.2s, opacity 0.4s ease, transform 0.4s ease;
     }
 
     li.checked {
@@ -134,10 +177,17 @@
         opacity: 0.5;
     }
 
+    .item-main {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+        cursor: pointer;
+    }
+
     .emoji {
         font-size: 1.6em;
         margin-right: 18px;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* bouncy effect */
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         min-width: 30px;
         text-align: center;
     }
@@ -161,312 +211,571 @@
         color: #aaa;
     }
 
-    .quantity {
-        font-size: 1em;
-        font-weight: 600;
-        padding: 6px 12px;
+    .item-quantity {
+        font-size: 0.9em;
+        font-weight: 500;
+        padding: 4px 10px;
         border-radius: 8px;
         background-color: var(--medium-gray);
-        min-width: 60px;
         text-align: center;
-        transition: background-color 0.3s;
-        outline-color: var(--primary-color);
+        margin-left: 10px;
+        color: var(--dark-gray);
+    }
+
+    .add-item-btn {
+        display: block;
+        width: calc(100% - 40px);
+        margin: 5px 20px 15px 20px;
+        padding: 10px;
+        border: 2px dashed var(--medium-gray);
+        border-radius: 12px;
+        background-color: var(--light-gray);
+        color: var(--dark-gray);
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.3s, border-color 0.3s;
+    }
+    .add-item-btn:hover {
+        background-color: var(--medium-gray);
+        border-color: #ccc;
+    }
+    
+    .add-category-section {
+        padding: 15px 25px;
+    }
+    .add-category-btn {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        background-color: var(--primary-light);
+        border: 2px solid var(--primary-color);
+        color: var(--primary-color);
+        font-size: 1em;
+        font-weight: 600;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: background-color 0.3s, color 0.3s;
+    }
+     .add-category-btn:hover {
+        background-color: var(--primary-color);
+        color: white;
+     }
+
+    /* Modal Styles */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    .modal-overlay.visible {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .modal-content {
+        background: var(--background-color);
+        padding: 25px;
+        border-radius: 15px;
+        width: 90%;
+        max-width: 400px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        transform: scale(0.9);
+        transition: transform 0.3s ease;
+    }
+    .modal-overlay.visible .modal-content {
+        transform: scale(1);
+    }
+
+    .modal-content h3 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        color: var(--text-color);
+    }
+
+    .modal-form-group {
+        margin-bottom: 15px;
+    }
+    .modal-form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+        font-size: 0.9em;
+        color: var(--dark-gray);
+    }
+    .modal-form-group input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid var(--medium-gray);
+        border-radius: 8px;
+        font-size: 1em;
+        box-sizing: border-box;
+    }
+    .modal-form-group input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 2px var(--primary-light);
+    }
+
+    .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .modal-btn {
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    .modal-btn-primary {
+        background-color: var(--primary-color);
+        color: white;
+    }
+    .modal-btn-primary:hover {
+        background-color: var(--primary-dark);
+    }
+    .modal-btn-secondary {
+        background-color: var(--medium-gray);
+        color: var(--text-color);
+    }
+    .modal-btn-secondary:hover {
+        background-color: #d3d9df;
+    }
+
+    /* Animation for item removal */
+    .removing {
+        opacity: 0;
+        transform: translateX(-100px);
     }
 
 </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header">
-        <h1>🎣 Радость встреч у водоема</h1>
-    </div>
-    
-    <div class="progress-section">
-        <div class="progress-text" id="progress-text">Выполнено: 0 из 0</div>
-        <div class="progress-container">
-            <div class="progress-bar" id="progress-bar"></div>
-        </div>
-    </div>
+<div id="app-container">
+    <!-- App will be rendered here -->
+</div>
 
-    <div class="category">
-        <div class="category-title">
-            <span>🥩 Основное для гриля</span>
-            <span class="arrow">▼</span>
-        </div>
-        <div class="category-content">
-            <ul>
-                <li data-id="meat-pork">
-                    <span class="emoji">🍖</span>
-                    <div class="item-details">
-                        <div class="item-name">Свиной ошеек</div>
-                        <div class="item-note">Без кости, охлажденный</div>
-                    </div>
-                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">3 кг</div>
-                </li>
-                <li data-id="fish-mackerel">
-                    <span class="emoji">🐟</span>
-                    <div class="item-details">
-                        <div class="item-name">Скумбрия</div>
-                        <div class="item-note">Для вегетарианца</div>
-                    </div>
-                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">2 шт.</div>
-                </li>
-                <li data-id="seasoning-meat">
-                    <span class="emoji">🌶️</span>
-                    <div class="item-details"><div class="item-name">Приправа для шашлыка</div></div>
-                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">1 пачка</div>
-                </li>
-                 <li data-id="seasoning-fish">
-                    <span class="emoji">🌿</span>
-                    <div class="item-details"><div class="item-name">Приправа для рыбы</div></div>
-                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">1 пачка</div>
-                </li>
-            </ul>
-        </div>
-    </div>
-
-    <div class="category">
-        <div class="category-title">
-            <span>🥬 Овощи и закуски</span>
-            <span class="arrow">▼</span>
-        </div>
-        <div class="category-content">
-            <ul>
-                <li data-id="onion">
-                    <span class="emoji">🧅</span>
-                    <div class="item-details"><div class="item-name">Лук репчатый</div><div class="item-note">Для маринада и салата</div></div>
-                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">1 кг</div>
-                </li>
-                <li data-id="tomatoes">
-                    <span class="emoji">🍅</span>
-                    <div class="item-details"><div class="item-name">Помидоры</div></div>
-                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">1.5 кг</div>
-                </li>
-                <li data-id="cucumbers">
-                    <span class="emoji">🥒</span>
-                    <div class="item-details"><div class="item-name">Огурцы</div></div>
-                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">1 кг</div>
-                </li>
-                <li data-id="pepper">
-                    <span class="emoji">🫑</span>
-                    <div class="item-details"><div class="item-name">Болгарский перец</div></div>
-                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">0.5 кг</div>
-                </li>
-                <li data-id="mushrooms">
-                    <span class="emoji">🍄</span>
-                    <div class="item-details"><div class="item-name">Шампиньоны</div><div class="item-note">Для гриля</div></div>
-                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">1 кг</div>
-                </li>
-                <li data-id="sauce-satsebeli">
-                    <span class="emoji">🥫</span>
-                    <div class="item-details"><div class="item-name">Соус Сацебели</div><div class="item-note">К мясу</div></div>
-                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">1 шт.</div>
-                </li>
-                <li data-id="pickles">
-                    <span class="emoji">🫙</span>
-                    <div class="item-details"><div class="item-name">Корнишоны</div><div class="item-note">Или маринованные огурцы</div></div>
-                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">1 банка</div>
-                </li>
-                <li data-id="lavash">
-                    <span class="emoji">🫓</span>
-                    <div class="item-details"><div class="item-name">Лаваш тонкий</div></div>
-                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">3 уп.</div>
-                </li>
-                 <li data-id="cheese-suluguni">
-                    <span class="emoji">🧀</span>
-                    <div class="item-details"><div class="item-name">Сыр сулугуни</div><div class="item-note">Для лаваша на мангале</div></div>
-                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">400 г</div>
-                </li>
-                <li data-id="greens">
-                    <span class="emoji">🌿</span>
-                    <div class="item-details"><div class="item-name">Зелень (ассорти)</div></div>
-                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">3 пучка</div>
-                </li>
-            </ul>
-        </div>
-    </div>
-    
-     <div class="category">
-        <div class="category-title">
-            <span>🍹 Напитки</span>
-            <span class="arrow">▼</span>
-        </div>
-        <div class="category-content">
-            <ul>
-                <li data-id="water">
-                    <span class="emoji">💧</span>
-                    <div class="item-details"><div class="item-name">Вода питьевая</div></div>
-                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">2 л</div>
-                </li>
-                 <li data-id="soda">
-                    <span class="emoji">🥤</span>
-                    <div class="item-details"><div class="item-name">Кола / Лимонад</div></div>
-                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">4 л</div>
-                </li>
-                <li data-id="lemon">
-                    <span class="emoji">🍋</span>
-                    <div class="item-details"><div class="item-name">Лимон</div><div class="item-note">Для рыбы и напитков</div></div>
-                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">2 шт.</div>
-                </li>
-                <li data-id="beer">
-                    <span class="emoji">🍺</span>
-                    <div class="item-details"><div class="item-name">Пиво</div></div>
-                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">16 банок</div>
-                </li>
-                <li data-id="whiskey">
-                    <span class="emoji">🥃</span>
-                    <div class="item-details"><div class="item-name">Виски (Джек Фаер)</div></div>
-                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">0.7 л</div>
-                </li>
-                 <li data-id="gin">
-                    <span class="emoji">🍸</span>
-                    <div class="item-details"><div class="item-name">Джин (Gordon's Pink)</div></div>
-                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">0.7 л</div>
-                </li>
-                <li data-id="tonic">
-                    <span class="emoji">🍹</span>
-                    <div class="item-details"><div class="item-name">Тоник / Швепс</div> <div class="item-note">Для джина</div></div>
-                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">2 л</div>
-                </li>
-            </ul>
-        </div>
-    </div>
-
-    <div class="category">
-        <div class="category-title">
-            <span>🛠️ Прочее</span>
-            <span class="arrow">▼</span>
-        </div>
-        <div class="category-content">
-            <ul>
-                <li data-id="coal">
-                    <span class="emoji">🔥</span>
-                    <div class="item-details"><div class="item-name">Уголь</div></div>
-                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">5 кг</div>
-                </li>
-                <li data-id="lighter-fluid">
-                    <span class="emoji">💧</span>
-                    <div class="item-details"><div class="item-name">Розжиг</div></div>
-                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">1 бут.</div>
-                </li>
-                <li data-id="fan">
-                    <span class="emoji">💨</span>
-                    <div class="item-details"><div class="item-name">Веер или картонка</div><div class="item-note">Раздувать угли</div></div>
-                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">1 шт.</div>
-                </li>
-                <li data-id="foil">
-                    <span class="emoji">🛡️</span>
-                    <div class="item-details"><div class="item-name">Фольга для запекания</div></div>
-                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">1 рулон</div>
-                </li>
-                <li data-id="tableware">
-                    <span class="emoji">🍴</span>
-                    <div class="item-details"><div class="item-name">Одноразовая посуда</div></div>
-                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">1 комп.</div>
-                </li>
-                <li data-id="napkins">
-                    <span class="emoji">🧻</span>
-                    <div class="item-details"><div class="item-name">Салфетки (сух/вл)</div></div>
-                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">2 уп.</div>
-                </li>
-                 <li data-id="trash-bags">
-                    <span class="emoji">🗑️</span>
-                    <div class="item-details"><div class="item-name">Мусорные пакеты</div></div>
-                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">1 рулон</div>
-                </li>
-                 <li data-id="knife-board">
-                    <span class="emoji">🔪</span>
-                    <div class="item-details"><div class="item-name">Нож и доска</div></div>
-                    <div class="quantity" contenteditable="true" onclick="event.stopPropagation()">1 комп.</div>
-                </li>
-            </ul>
-        </div>
+<!-- Modal for adding/editing items -->
+<div id="item-modal" class="modal-overlay">
+    <div class="modal-content">
+        <h3 id="item-modal-title">Добавить продукт</h3>
+        <form id="item-modal-form">
+            <input type="hidden" id="item-modal-categoryId">
+            <input type="hidden" id="item-modal-itemId">
+            <div class="modal-form-group">
+                <label for="item-name">Название *</label>
+                <input type="text" id="item-name" required>
+            </div>
+            <div class="modal-form-group">
+                <label for="item-emoji">Эмодзи</label>
+                <input type="text" id="item-emoji">
+            </div>
+             <div class="modal-form-group">
+                <label for="item-note">Заметка</label>
+                <input type="text" id="item-note">
+            </div>
+             <div class="modal-form-group">
+                <label for="item-quantity">Количество</label>
+                <input type="text" id="item-quantity">
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="modal-btn modal-btn-secondary" id="item-modal-cancel">Отмена</button>
+                <button type="submit" class="modal-btn modal-btn-primary">Сохранить</button>
+            </div>
+        </form>
     </div>
 </div>
 
+<!-- Modal for adding/editing categories -->
+<div id="category-modal" class="modal-overlay">
+    <div class="modal-content">
+        <h3 id="category-modal-title">Добавить категорию</h3>
+        <form id="category-modal-form">
+            <input type="hidden" id="category-modal-id">
+            <div class="modal-form-group">
+                <label for="category-name-input">Название категории *</label>
+                <input type="text" id="category-name-input" required>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="modal-btn modal-btn-secondary" id="category-modal-cancel">Отмена</button>
+                <button type="submit" class="modal-btn modal-btn-primary">Сохранить</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const categories = document.querySelectorAll('.category-title');
-    const listItems = document.querySelectorAll('li[data-id]');
-    const progressBar = document.getElementById('progress-bar');
-    const progressText = document.getElementById('progress-text');
-    const STORAGE_KEY = 'picnicListState';
 
-    // --- Category Toggling ---
-    categories.forEach(category => {
-        category.addEventListener('click', () => {
-            const content = category.nextElementSibling;
-            const arrow = category.querySelector('.arrow');
-            const isOpened = content.style.maxHeight;
+    const appContainer = document.getElementById('app-container');
+    
+    // Item Modal
+    const itemModal = document.getElementById('item-modal');
+    const itemModalForm = document.getElementById('item-modal-form');
+    
+    // Category Modal
+    const categoryModal = document.getElementById('category-modal');
+    const categoryModalForm = document.getElementById('category-modal-form');
+    
+    const STORAGE_KEY = 'picnicListStateV2';
 
-            // Close all categories
-            document.querySelectorAll('.category-content').forEach(c => c.style.maxHeight = null);
-            document.querySelectorAll('.arrow').forEach(a => a.style.transform = 'rotate(0deg)');
-
-            // If the clicked one wasn't open, open it
-            if (!isOpened) {
-                content.style.maxHeight = content.scrollHeight + "px";
-                arrow.style.transform = 'rotate(180deg)';
+    // --- DEFAULT STATE ---
+    const getDefaultState = () => ({
+        appName: '🎣 Радость встреч у водоема',
+        categories: [
+            {
+                id: 'cat-1',
+                name: '🥩 Основное для гриля',
+                isOpen: true,
+                items: [
+                    { id: 'item-1', name: 'Свиной ошеек', note: 'Без кости, охлажденный', emoji: '🍖', quantity: '3 кг', checked: false },
+                    { id: 'item-2', name: 'Скумбрия', note: 'Для вегетарианца', emoji: '🐟', quantity: '2 шт.', checked: false },
+                    { id: 'item-3', name: 'Приправа для шашлыка', note: '', emoji: '🌶️', quantity: '1 пачка', checked: false },
+                    { id: 'item-4', name: 'Приправа для рыбы', note: '', emoji: '🌿', quantity: '1 пачка', checked: false }
+                ]
+            },
+            {
+                id: 'cat-2',
+                name: '🥬 Овощи и закуски',
+                isOpen: false,
+                items: [
+                    { id: 'item-5', name: 'Лук репчатый', note: 'Для маринада и салата', emoji: '🧅', quantity: '1 кг', checked: false },
+                    { id: 'item-6', name: 'Помидоры', note: '', emoji: '🍅', quantity: '1.5 кг', checked: false },
+                    { id: 'item-7', name: 'Огурцы', note: '', emoji: '🥒', quantity: '1 кг', checked: false },
+                    { id: 'item-8', name: 'Болгарский перец', note: '', emoji: '🫑', quantity: '0.5 кг', checked: false },
+                    { id: 'item-9', name: 'Шампиньоны', note: 'Для гриля', emoji: '🍄', quantity: '1 кг', checked: false },
+                    { id: 'item-10', name: 'Соус Сацебели', note: 'К мясу', emoji: '🥫', quantity: '1 шт.', checked: false },
+                    { id: 'item-11', name: 'Корнишоны', note: 'Или маринованные огурцы', emoji: '🫙', quantity: '1 банка', checked: false },
+                    { id: 'item-12', name: 'Лаваш тонкий', note: '', emoji: '🫓', quantity: '3 уп.', checked: false },
+                    { id: 'item-13', name: 'Сыр сулугуни', note: 'Для лаваша на мангале', emoji: '🧀', quantity: '400 г', checked: false },
+                    { id: 'item-14', name: 'Зелень (ассорти)', note: '', emoji: '🌿', quantity: '3 пучка', checked: false }
+                ]
+            },
+            {
+                id: 'cat-3',
+                name: '🍹 Напитки',
+                isOpen: false,
+                items: [
+                    { id: 'item-15', name: 'Вода питьевая', note: '', emoji: '💧', quantity: '2 л', checked: false },
+                    { id: 'item-16', name: 'Кола / Лимонад', note: '', emoji: '🥤', quantity: '4 л', checked: false },
+                    { id: 'item-17', name: 'Лимон', note: 'Для рыбы и напитков', emoji: '🍋', quantity: '2 шт.', checked: false },
+                    { id: 'item-18', name: 'Пиво', note: '', emoji: '🍺', quantity: '16 банок', checked: false },
+                    { id: 'item-19', name: 'Виски (Джек Фаер)', note: '', emoji: '🥃', quantity: '0.7 л', checked: false },
+                    { id: 'item-20', name: 'Джин (Gordon\'s Pink)', note: '', emoji: '🍸', quantity: '0.7 л', checked: false },
+                    { id: 'item-21', name: 'Тоник / Швепс', note: 'Для джина', emoji: '🍹', quantity: '2 л', checked: false }
+                ]
+            },
+            {
+                id: 'cat-4',
+                name: '🛠️ Прочее',
+                isOpen: false,
+                items: [
+                    { id: 'item-22', name: 'Уголь', note: '', emoji: '🔥', quantity: '5 кг', checked: false },
+                    { id: 'item-23', name: 'Розжиг', note: '', emoji: '💧', quantity: '1 бут.', checked: false },
+                    { id: 'item-24', name: 'Веер или картонка', note: 'Раздувать угли', emoji: '💨', quantity: '1 шт.', checked: false },
+                    { id: 'item-25', name: 'Фольга для запекания', note: '', emoji: '🛡️', quantity: '1 рулон', checked: false },
+                    { id: 'item-26', name: 'Одноразовая посуда', note: '', emoji: '🍴', quantity: '1 комп.', checked: false },
+                    { id: 'item-27', name: 'Салфетки (сух/вл)', note: '', emoji: '🧻', quantity: '2 уп.', checked: false },
+                    { id: 'item-28', name: 'Мусорные пакеты', note: '', emoji: '🗑️', quantity: '1 рулон', checked: false },
+                    { id: 'item-29', name: 'Нож и доска', note: '', emoji: '🔪', quantity: '1 комп.', checked: false }
+                ]
             }
-        });
+        ]
     });
+    
+    // --- STATE MANAGEMENT ---
+    let state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || getDefaultState();
 
-    // --- Item Toggling & State Management ---
-    const toggleItem = (item) => {
-        item.classList.toggle('checked');
-        updateProgress();
-        saveState();
+    const saveState = () => {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     };
 
-    listItems.forEach(item => {
-        item.addEventListener('click', () => toggleItem(item));
-    });
-
-    // --- Progress Bar ---
-    const updateProgress = () => {
-        const totalItems = listItems.length;
-        const checkedItems = document.querySelectorAll('li.checked').length;
+    // --- RENDER FUNCTION ---
+    const render = () => {
+        const totalItems = state.categories.reduce((acc, cat) => acc + cat.items.length, 0);
+        const checkedItems = state.categories.reduce((acc, cat) => acc + cat.items.filter(i => i.checked).length, 0);
         const percentage = totalItems > 0 ? (checkedItems / totalItems) * 100 : 0;
 
-        progressBar.style.width = percentage + '%';
-        progressText.textContent = `Выполнено: ${checkedItems} из ${totalItems}`;
-    };
+        appContainer.innerHTML = `
+            <div class="container">
+                <div class="header">
+                    <h1 contenteditable="true" id="app-name">${state.appName}</h1>
+                </div>
+                
+                <div class="progress-section">
+                    <div class="progress-text">Выполнено: ${checkedItems} из ${totalItems}</div>
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: ${percentage}%"></div>
+                    </div>
+                </div>
 
-    // --- Local Storage for Persistence ---
-    const saveState = () => {
-        const checkedIds = [];
-        listItems.forEach(item => {
-            if (item.classList.contains('checked')) {
-                checkedIds.push(item.dataset.id);
-            }
+                <div id="categories-container">
+                    ${state.categories.map(category => `
+                        <div class="category" data-category-id="${category.id}">
+                            <div class="category-title">
+                                <span class="category-name">${category.name}</span>
+                                <div class="category-controls">
+                                    <button class="icon-btn edit-category-btn" title="Редактировать категорию">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+                                    </button>
+                                     <button class="icon-btn delete-category-btn" title="Удалить категорию">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                    </button>
+                                    <span class="arrow">${category.isOpen ? '▲' : '▼'}</span>
+                                </div>
+                            </div>
+                            <div class="category-content" style="max-height: ${category.isOpen ? '1500px' : '0'};">
+                                <ul>
+                                    ${category.items.map(item => `
+                                        <li data-item-id="${item.id}" class="${item.checked ? 'checked' : ''}">
+                                            <div class="item-main">
+                                                <span class="emoji">${item.emoji || '🛒'}</span>
+                                                <div class="item-details">
+                                                    <div class="item-name">${item.name}</div>
+                                                    ${item.note ? `<div class="item-note">${item.note}</div>` : ''}
+                                                </div>
+                                            </div>
+                                            <div class="item-controls">
+                                                ${item.quantity ? `<div class="item-quantity">${item.quantity}</div>` : ''}
+                                                <button class="icon-btn edit-item-btn" title="Редактировать продукт">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+                                                </button>
+                                                 <button class="icon-btn delete-item-btn" title="Удалить продукт">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                                </button>
+                                            </div>
+                                        </li>
+                                    `).join('')}
+                                </ul>
+                                <button class="add-item-btn">+ Добавить продукт</button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="add-category-section">
+                    <button class="add-category-btn">+ Добавить категорию</button>
+                </div>
+            </div>
+        `;
+        addEventListeners();
+    };
+    
+    // --- EVENT LISTENERS ---
+    const addEventListeners = () => {
+        // App Name
+        document.getElementById('app-name').addEventListener('blur', (e) => {
+            state.appName = e.target.innerText;
+            saveState();
         });
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(checkedIds));
-    };
 
-    const loadState = () => {
-        const savedState = JSON.parse(localStorage.getItem(STORAGE_KEY));
-        if (savedState) {
-            savedState.forEach(id => {
-                const item = document.querySelector(`li[data-id="${id}"]`);
-                if (item) {
-                    item.classList.add('checked');
+        // Category toggling
+        document.querySelectorAll('.category-title').forEach(title => {
+            title.addEventListener('click', (e) => {
+                if (e.target.closest('.icon-btn')) return;
+                const categoryId = title.parentElement.dataset.categoryId;
+                const category = state.categories.find(c => c.id === categoryId);
+                category.isOpen = !category.isOpen;
+                render();
+            });
+        });
+        
+        // Item checking
+        document.querySelectorAll('.item-main').forEach(itemEl => {
+            itemEl.addEventListener('click', () => {
+                const itemId = itemEl.parentElement.dataset.itemId;
+                for (const category of state.categories) {
+                    const item = category.items.find(i => i.id === itemId);
+                    if (item) {
+                        item.checked = !item.checked;
+                        break;
+                    }
+                }
+                saveState();
+                render();
+            });
+        });
+
+        // Add Category
+        document.querySelector('.add-category-btn').addEventListener('click', () => {
+            openCategoryModal();
+        });
+
+        // Edit Category
+        document.querySelectorAll('.edit-category-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const categoryId = e.target.closest('.category').dataset.categoryId;
+                openCategoryModal(categoryId);
+            });
+        });
+
+        // Delete Category
+        document.querySelectorAll('.delete-category-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const categoryId = e.target.closest('.category').dataset.categoryId;
+                const category = state.categories.find(c => c.id === categoryId);
+                if (confirm(`Вы уверены, что хотите удалить категорию "${category.name}" и все ее продукты?`)) {
+                    state.categories = state.categories.filter(c => c.id !== categoryId);
+                    saveState();
+                    render();
                 }
             });
-        }
+        });
+        
+        // Add Item
+        document.querySelectorAll('.add-item-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const categoryId = e.target.closest('.category').dataset.categoryId;
+                openItemModal(categoryId);
+            });
+        });
+
+        // Edit Item
+        document.querySelectorAll('.edit-item-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const categoryId = e.target.closest('.category').dataset.categoryId;
+                const itemId = e.target.closest('li').dataset.itemId;
+                openItemModal(categoryId, itemId);
+            });
+        });
+
+        // Delete Item
+        document.querySelectorAll('.delete-item-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const li = e.target.closest('li');
+                const itemId = li.dataset.itemId;
+                const categoryId = e.target.closest('.category').dataset.categoryId;
+                
+                const category = state.categories.find(c => c.id === categoryId);
+                if(category) {
+                    const item = category.items.find(i => i.id === itemId);
+                    if (item && confirm(`Вы уверены, что хотите удалить продукт "${item.name}"?`)) {
+                        li.classList.add('removing');
+                        setTimeout(() => {
+                            category.items = category.items.filter(i => i.id !== itemId);
+                            saveState();
+                            render();
+                        }, 400);
+                    }
+                }
+            });
+        });
     };
+
+    // --- ITEM MODAL LOGIC ---
+    const openItemModal = (categoryId, itemId = null) => {
+        itemModalForm.reset();
+        document.getElementById('item-modal-categoryId').value = categoryId;
+        
+        if (itemId) {
+            document.getElementById('item-modal-title').textContent = 'Редактировать продукт';
+            const category = state.categories.find(c => c.id === categoryId);
+            const item = category.items.find(i => i.id === itemId);
+            document.getElementById('item-modal-itemId').value = itemId;
+            document.getElementById('item-name').value = item.name;
+            document.getElementById('item-emoji').value = item.emoji || '';
+            document.getElementById('item-note').value = item.note || '';
+            document.getElementById('item-quantity').value = item.quantity || '';
+        } else {
+            document.getElementById('item-modal-title').textContent = 'Добавить продукт';
+            document.getElementById('item-modal-itemId').value = '';
+        }
+        itemModal.classList.add('visible');
+    };
+
+    const closeItemModal = () => itemModal.classList.remove('visible');
+
+    itemModalForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const categoryId = document.getElementById('item-modal-categoryId').value;
+        const itemId = document.getElementById('item-modal-itemId').value;
+        const category = state.categories.find(c => c.id === categoryId);
+        
+        const itemData = {
+            name: document.getElementById('item-name').value.trim(),
+            emoji: document.getElementById('item-emoji').value.trim(),
+            note: document.getElementById('item-note').value.trim(),
+            quantity: document.getElementById('item-quantity').value.trim(),
+        };
+
+        if (!itemData.name) return alert('Название продукта не может быть пустым.');
+
+        if (itemId) {
+            const item = category.items.find(i => i.id === itemId);
+            Object.assign(item, itemData);
+        } else {
+            category.items.push({ ...itemData, id: `item-${Date.now()}`, checked: false });
+        }
+        
+        saveState();
+        render();
+        closeItemModal();
+    });
+
+    // --- CATEGORY MODAL LOGIC ---
+    const openCategoryModal = (categoryId = null) => {
+        categoryModalForm.reset();
+        if (categoryId) {
+            document.getElementById('category-modal-title').textContent = 'Редактировать категорию';
+            const category = state.categories.find(c => c.id === categoryId);
+            document.getElementById('category-modal-id').value = categoryId;
+            document.getElementById('category-name-input').value = category.name;
+        } else {
+            document.getElementById('category-modal-title').textContent = 'Добавить категорию';
+            document.getElementById('category-modal-id').value = '';
+        }
+        categoryModal.classList.add('visible');
+    };
+
+    const closeCategoryModal = () => categoryModal.classList.remove('visible');
+
+    categoryModalForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const categoryId = document.getElementById('category-modal-id').value;
+        const categoryName = document.getElementById('category-name-input').value.trim();
+
+        if (!categoryName) return alert('Название категории не может быть пустым.');
+
+        if (categoryId) {
+            const category = state.categories.find(c => c.id === categoryId);
+            category.name = categoryName;
+        } else {
+            state.categories.push({
+                id: `cat-${Date.now()}`,
+                name: categoryName,
+                isOpen: true,
+                items: []
+            });
+        }
+        saveState();
+        render();
+        closeCategoryModal();
+    });
+
+    // --- GENERAL MODAL CLOSING ---
+    document.getElementById('item-modal-cancel').addEventListener('click', closeItemModal);
+    itemModal.addEventListener('click', (e) => e.target === itemModal && closeItemModal());
     
-    // --- Initial Load ---
-    loadState();
-    updateProgress();
-    
-    // Auto-open the first category for better initial UX
-    if (categories.length > 0) {
-        const firstContent = categories[0].nextElementSibling;
-        const firstArrow = categories[0].querySelector('.arrow');
-        firstContent.style.maxHeight = firstContent.scrollHeight + "px";
-        firstArrow.style.transform = 'rotate(180deg)';
-    }
+    document.getElementById('category-modal-cancel').addEventListener('click', closeCategoryModal);
+    categoryModal.addEventListener('click', (e) => e.target === categoryModal && closeCategoryModal());
+
+    // --- INITIAL RENDER ---
+    render();
 });
 </script>
 
